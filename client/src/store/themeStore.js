@@ -52,9 +52,13 @@ const MODES = {
 };
 
 function applyVars(theme, mode) {
+  console.log('[ThemeStore] applyVars triggered with theme:', theme, 'mode:', mode);
   const root = document.documentElement;
   const t = THEMES[theme] || THEMES.indigo;
   const m = MODES[mode] || MODES.dark;
+
+  console.log('[ThemeStore] resolved theme config t:', t);
+  console.log('[ThemeStore] resolved mode config m:', m);
 
   // Accent color variables
   root.style.setProperty('--color-accent-rgb', t.accentRgb);
@@ -69,6 +73,12 @@ function applyVars(theme, mode) {
   root.style.setProperty('--text-primary', m.textPrimary);
   root.style.setProperty('--text-secondary', m.textSecondary);
   root.style.setProperty('--text-muted', m.textMuted);
+
+  console.log('[ThemeStore] inline properties applied to documentElement:', {
+    '--color-accent-rgb': root.style.getPropertyValue('--color-accent-rgb'),
+    '--color-accent-hover-rgb': root.style.getPropertyValue('--color-accent-hover-rgb'),
+    '--bg-color': root.style.getPropertyValue('--bg-color'),
+  });
 }
 
 const defaultTheme = localStorage.getItem('resumify_theme') || 'indigo';
@@ -79,6 +89,7 @@ export const useThemeStore = create((set) => ({
   mode: defaultMode,
 
   setTheme: (newTheme) => {
+    console.log('[ThemeStore] setTheme called with:', newTheme);
     const currentMode = localStorage.getItem('resumify_mode') || 'dark';
     localStorage.setItem('resumify_theme', newTheme);
     applyVars(newTheme, currentMode);
@@ -86,6 +97,7 @@ export const useThemeStore = create((set) => ({
   },
 
   setMode: (newMode) => {
+    console.log('[ThemeStore] setMode called with:', newMode);
     const currentTheme = localStorage.getItem('resumify_theme') || 'indigo';
     localStorage.setItem('resumify_mode', newMode);
     applyVars(currentTheme, newMode);
@@ -93,6 +105,7 @@ export const useThemeStore = create((set) => ({
   },
 
   initTheme: () => {
+    console.log('[ThemeStore] initTheme triggered');
     const activeTheme = localStorage.getItem('resumify_theme') || 'indigo';
     const activeMode = localStorage.getItem('resumify_mode') || 'dark';
     applyVars(activeTheme, activeMode);

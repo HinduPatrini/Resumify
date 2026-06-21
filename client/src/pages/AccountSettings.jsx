@@ -15,6 +15,7 @@ import { User, Lock, Palette, BarChart, Check, Sun, Moon } from 'lucide-react';
 export default function AccountSettings() {
   const { user, updateProfile } = useAuthStore();
   const { theme, setTheme, mode, setMode } = useThemeStore();
+  console.log('[AccountSettings] render. theme:', theme, 'mode:', mode);
   const { resumes, fetchResumes } = useResumeStore();
   const [loading, setLoading] = useState(false);
 
@@ -180,6 +181,7 @@ export default function AccountSettings() {
                   {themeOptions.map((opt) => (
                     <button
                       key={opt.id}
+                      type="button"
                       onClick={() => setTheme(opt.id)}
                       className={`
                         flex items-center gap-2 px-3 py-2.5 rounded-lg border text-left transition-all duration-200 focus:outline-none
