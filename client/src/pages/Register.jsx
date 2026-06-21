@@ -40,9 +40,7 @@ export default function Register() {
       >
         {/* Branding header */}
         <div className="flex flex-col items-center gap-3 mb-8">
-          <div className="w-12 h-12 bg-accent rounded-xl flex items-center justify-center font-heading font-bold text-white text-xl shadow-lg shadow-accent/20 select-none">
-            R
-          </div>
+          <img src="/logo.jpeg" alt="Resumify Logo" className="w-12 h-12 object-cover rounded-xl shadow-md select-none" />
           <h2 className="text-2xl font-heading font-bold text-text-primary tracking-tight text-center">
             Create your account
           </h2>

@@ -23,9 +23,7 @@ export default function Sidebar() {
       {/* Mobile Top Header (only visible when width < 768px) */}
       <header className="md:hidden flex items-center justify-between px-5 py-3 bg-dark-card border-b border-dark-border sticky top-0 z-30 w-full shrink-0">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center font-heading font-bold text-white text-base shadow-md shadow-accent/20">
-            R
-          </div>
+          <img src="/logo.jpeg" alt="Resumify Logo" className="w-8 h-8 object-cover rounded-lg shadow-sm" />
           <span className="font-heading font-semibold text-text-primary tracking-tight">Resumify</span>
         </div>
         
@@ -48,9 +46,7 @@ export default function Sidebar() {
         <div className="flex flex-col items-center gap-8 w-full">
           {/* Logo */}
           <div className="flex items-center justify-center gap-3 w-full px-4">
-            <div className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center font-heading font-bold text-white text-lg shrink-0 shadow-lg shadow-accent/30">
-              R
-            </div>
+            <img src="/logo.jpeg" alt="Resumify Logo" className="w-10 h-10 object-cover rounded-xl shrink-0 shadow-md" />
             {isOpen && (
               <span className="font-heading font-bold text-text-primary text-lg tracking-tight whitespace-nowrap">
                 Resumify
