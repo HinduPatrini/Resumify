@@ -3,15 +3,15 @@
 @tailwind utilities;
 
 :root {
-  /* Dark mode default variables */
-  --bg-color: #0e1015;
-  --card-color: #161822;
-  --border-color: #262936;
-  --input-color: #1d2030;
-  --hover-color: #222538;
-  --text-primary: #f3f4f6;
-  --text-secondary: #9ca3af;
-  --text-muted: #6b7280;
+  /* Dark mode default variables in RGB format */
+  --bg-color-rgb: 14, 16, 21;
+  --card-color-rgb: 22, 24, 34;
+  --border-color-rgb: 38, 41, 54;
+  --input-color-rgb: 29, 32, 48;
+  --hover-color-rgb: 34, 37, 56;
+  --text-primary-rgb: 243, 244, 246;
+  --text-secondary-rgb: 156, 163, 175;
+  --text-muted-rgb: 107, 114, 128;
 
   --color-accent-rgb: 110, 92, 245;
   --color-accent-hover-rgb: 90, 75, 227;
@@ -19,20 +19,20 @@
 
 .light-mode {
   /* Light mode variable overrides — now also driven by themeStore but kept as fallback */
-  --bg-color: #f9fafb;
-  --card-color: #ffffff;
-  --border-color: #e5e7eb;
-  --input-color: #f3f4f6;
-  --hover-color: #f0f0f5;
-  --text-primary: #111827;
-  --text-secondary: #4b5563;
-  --text-muted: #9ca3af;
+  --bg-color-rgb: 249, 250, 251;
+  --card-color-rgb: 255, 255, 255;
+  --border-color-rgb: 229, 231, 235;
+  --input-color-rgb: 243, 244, 246;
+  --hover-color-rgb: 240, 240, 245;
+  --text-primary-rgb: 17, 24, 39;
+  --text-secondary-rgb: 75, 85, 99;
+  --text-muted-rgb: 156, 163, 175;
 }
 
 @layer base {
   body {
     @apply bg-background text-text-primary font-sans selection:bg-accent/30 selection:text-white min-h-screen;
-    background-color: var(--bg-color);
+    background-color: rgb(var(--bg-color-rgb));
   }
 }
 
@@ -43,16 +43,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-color);
+  background: rgb(var(--bg-color-rgb));
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border-color);
+  background: rgb(var(--border-color-rgb));
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--hover-color);
+  background: rgb(var(--hover-color-rgb));
 }
 
 /* React Datepicker styling overrides for theme */
@@ -61,28 +61,28 @@
 }
 
 .react-datepicker {
-  background-color: var(--card-color) !important;
-  border: 1px solid var(--border-color) !important;
+  background-color: rgb(var(--card-color-rgb)) !important;
+  border: 1px solid rgb(var(--border-color-rgb)) !important;
   font-family: 'Inter', sans-serif !important;
-  color: var(--text-primary) !important;
+  color: rgb(var(--text-primary-rgb)) !important;
   border-radius: 0.75rem !important;
   overflow: hidden;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
 }
 
 .react-datepicker__header {
-  background-color: var(--input-color) !important;
-  border-bottom: 1px solid var(--border-color) !important;
+  background-color: rgb(var(--input-color-rgb)) !important;
+  border-bottom: 1px solid rgb(var(--border-color-rgb)) !important;
 }
 
 .react-datepicker__current-month,
 .react-datepicker__day-name,
 .react-datepicker-time__header {
-  color: var(--text-primary) !important;
+  color: rgb(var(--text-primary-rgb)) !important;
 }
 
 .react-datepicker__day {
-  color: var(--text-secondary) !important;
+  color: rgb(var(--text-secondary-rgb)) !important;
 }
 
 .react-datepicker__day:hover {

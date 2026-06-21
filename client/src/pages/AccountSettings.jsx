@@ -15,7 +15,6 @@ import { User, Lock, Palette, BarChart, Check, Sun, Moon } from 'lucide-react';
 export default function AccountSettings() {
   const { user, updateProfile } = useAuthStore();
   const { theme, setTheme, mode, setMode } = useThemeStore();
-  console.log('[AccountSettings] render. theme:', theme, 'mode:', mode);
   const { resumes, fetchResumes } = useResumeStore();
   const [loading, setLoading] = useState(false);
 

@@ -30,55 +30,45 @@ const THEMES = {
 
 const MODES = {
   dark: {
-    bgColor: '#0e1015',
-    cardColor: '#161822',
-    borderColor: '#262936',
-    inputColor: '#1d2030',
-    hoverColor: '#222538',
-    textPrimary: '#f3f4f6',
-    textSecondary: '#9ca3af',
-    textMuted: '#6b7280',
+    bgRgb: '14, 16, 21',
+    cardRgb: '22, 24, 34',
+    borderRgb: '38, 41, 54',
+    inputRgb: '29, 32, 48',
+    hoverRgb: '34, 37, 56',
+    textPrimaryRgb: '243, 244, 246',
+    textSecondaryRgb: '156, 163, 175',
+    textMutedRgb: '107, 114, 128',
   },
   light: {
-    bgColor: '#f9fafb',
-    cardColor: '#ffffff',
-    borderColor: '#e5e7eb',
-    inputColor: '#f3f4f6',
-    hoverColor: '#f0f0f5',
-    textPrimary: '#111827',
-    textSecondary: '#4b5563',
-    textMuted: '#9ca3af',
+    bgRgb: '249, 250, 251',
+    cardRgb: '255, 255, 255',
+    borderRgb: '229, 231, 235',
+    inputRgb: '243, 244, 246',
+    hoverRgb: '240, 240, 245',
+    textPrimaryRgb: '17, 24, 39',
+    textSecondaryRgb: '75, 85, 99',
+    textMutedRgb: '156, 163, 175',
   },
 };
 
 function applyVars(theme, mode) {
-  console.log('[ThemeStore] applyVars triggered with theme:', theme, 'mode:', mode);
   const root = document.documentElement;
   const t = THEMES[theme] || THEMES.indigo;
   const m = MODES[mode] || MODES.dark;
-
-  console.log('[ThemeStore] resolved theme config t:', t);
-  console.log('[ThemeStore] resolved mode config m:', m);
 
   // Accent color variables
   root.style.setProperty('--color-accent-rgb', t.accentRgb);
   root.style.setProperty('--color-accent-hover-rgb', t.accentHoverRgb);
 
-  // Mode (background/text/card) variables
-  root.style.setProperty('--bg-color', m.bgColor);
-  root.style.setProperty('--card-color', m.cardColor);
-  root.style.setProperty('--border-color', m.borderColor);
-  root.style.setProperty('--input-color', m.inputColor);
-  root.style.setProperty('--hover-color', m.hoverColor);
-  root.style.setProperty('--text-primary', m.textPrimary);
-  root.style.setProperty('--text-secondary', m.textSecondary);
-  root.style.setProperty('--text-muted', m.textMuted);
-
-  console.log('[ThemeStore] inline properties applied to documentElement:', {
-    '--color-accent-rgb': root.style.getPropertyValue('--color-accent-rgb'),
-    '--color-accent-hover-rgb': root.style.getPropertyValue('--color-accent-hover-rgb'),
-    '--bg-color': root.style.getPropertyValue('--bg-color'),
-  });
+  // Mode RGB variables
+  root.style.setProperty('--bg-color-rgb', m.bgRgb);
+  root.style.setProperty('--card-color-rgb', m.cardRgb);
+  root.style.setProperty('--border-color-rgb', m.borderRgb);
+  root.style.setProperty('--input-color-rgb', m.inputRgb);
+  root.style.setProperty('--hover-color-rgb', m.hoverRgb);
+  root.style.setProperty('--text-primary-rgb', m.textPrimaryRgb);
+  root.style.setProperty('--text-secondary-rgb', m.textSecondaryRgb);
+  root.style.setProperty('--text-muted-rgb', m.textMutedRgb);
 }
 
 const defaultTheme = localStorage.getItem('resumify_theme') || 'indigo';
@@ -89,7 +79,6 @@ export const useThemeStore = create((set) => ({
   mode: defaultMode,
 
   setTheme: (newTheme) => {
-    console.log('[ThemeStore] setTheme called with:', newTheme);
     const currentMode = localStorage.getItem('resumify_mode') || 'dark';
     localStorage.setItem('resumify_theme', newTheme);
     applyVars(newTheme, currentMode);
@@ -97,7 +86,6 @@ export const useThemeStore = create((set) => ({
   },
 
   setMode: (newMode) => {
-    console.log('[ThemeStore] setMode called with:', newMode);
     const currentTheme = localStorage.getItem('resumify_theme') || 'indigo';
     localStorage.setItem('resumify_mode', newMode);
     applyVars(currentTheme, newMode);
@@ -105,7 +93,6 @@ export const useThemeStore = create((set) => ({
   },
 
   initTheme: () => {
-    console.log('[ThemeStore] initTheme triggered');
     const activeTheme = localStorage.getItem('resumify_theme') || 'indigo';
     const activeMode = localStorage.getItem('resumify_mode') || 'dark';
     applyVars(activeTheme, activeMode);
