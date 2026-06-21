@@ -10,11 +10,11 @@ import Navbar from '../components/Navbar';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
-import { User, Lock, Palette, BarChart, Check } from 'lucide-react';
+import { User, Lock, Palette, BarChart, Check, Sun, Moon } from 'lucide-react';
 
 export default function AccountSettings() {
   const { user, updateProfile } = useAuthStore();
-  const { theme, setTheme } = useThemeStore();
+  const { theme, setTheme, mode, setMode } = useThemeStore();
   const { resumes, fetchResumes } = useResumeStore();
   const [loading, setLoading] = useState(false);
 
@@ -184,7 +184,7 @@ export default function AccountSettings() {
                       className={`
                         flex items-center gap-2 px-3 py-2.5 rounded-lg border text-left transition-all duration-200 focus:outline-none
                         ${theme === opt.id 
-                          ? 'border-accent/40 bg-accent/10 text-white shadow-md' 
+                          ? 'border-accent/40 bg-accent/10 text-text-primary shadow-md' 
                           : 'border-dark-border bg-dark-input/40 text-text-secondary hover:border-dark-border/80 hover:text-text-primary'}
                       `}
                     >
@@ -195,6 +195,40 @@ export default function AccountSettings() {
                       )}
                     </button>
                   ))}
+                </div>
+
+                <div className="border-t border-dark-border/40 mt-5 pt-4">
+                  <h4 className="text-xs font-heading font-semibold text-text-primary tracking-wide uppercase select-none mb-3">
+                    Theme Mode
+                  </h4>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setMode('dark')}
+                      className={`
+                        flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-medium transition-all duration-200 focus:outline-none
+                        ${mode === 'dark'
+                          ? 'border-accent/40 bg-accent/10 text-text-primary shadow-md font-semibold'
+                          : 'border-dark-border bg-dark-input/40 text-text-secondary hover:border-dark-border/80 hover:text-text-primary'}
+                      `}
+                    >
+                      <Moon size={16} />
+                      Dark
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMode('light')}
+                      className={`
+                        flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-medium transition-all duration-200 focus:outline-none
+                        ${mode === 'light'
+                          ? 'border-accent/40 bg-accent/10 text-text-primary shadow-md font-semibold'
+                          : 'border-dark-border bg-dark-input/40 text-text-secondary hover:border-dark-border/80 hover:text-text-primary'}
+                      `}
+                    >
+                      <Sun size={16} />
+                      Light
+                    </button>
+                  </div>
                 </div>
               </Card>
 

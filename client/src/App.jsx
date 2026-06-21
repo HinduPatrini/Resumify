@@ -29,15 +29,15 @@ function App() {
         position="top-right" 
         toastOptions={{
           style: {
-            background: '#161822',
-            color: '#f3f4f6',
-            border: '1px solid #262936',
+            background: 'var(--card-color)',
+            color: 'var(--text-primary)',
+            border: '1px solid var(--border-color)',
             fontFamily: 'Inter, sans-serif',
           },
           success: {
             iconTheme: {
-              primary: '#6e5cf5',
-              secondary: '#161822',
+              primary: 'rgb(var(--color-accent-rgb))',
+              secondary: 'var(--card-color)',
             },
           },
         }}

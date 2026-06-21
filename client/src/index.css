@@ -3,8 +3,30 @@
 @tailwind utilities;
 
 :root {
+  /* Dark mode default variables */
+  --bg-color: #0e1015;
+  --card-color: #161822;
+  --border-color: #262936;
+  --input-color: #1d2030;
+  --hover-color: #222538;
+  --text-primary: #f3f4f6;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+
   --color-accent-rgb: 110, 92, 245;
   --color-accent-hover-rgb: 90, 75, 227;
+}
+
+.light-mode {
+  /* Light mode variable overrides */
+  --bg-color: #f9fafb;
+  --card-color: #ffffff;
+  --border-color: #e5e7eb;
+  --input-color: #f3f4f6;
+  --hover-color: #f9fafb;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
 }
 
 .theme-emerald {
@@ -35,7 +57,7 @@
 @layer base {
   body {
     @apply bg-background text-text-primary font-sans selection:bg-accent/30 selection:text-white min-h-screen;
-    background-color: #0e1015;
+    background-color: var(--bg-color);
   }
 }
 
@@ -46,46 +68,46 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #0e1015;
+  background: var(--bg-color);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #262936;
+  background: var(--border-color);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3e4256;
+  background: var(--hover-color);
 }
 
-/* React Datepicker styling overrides for dark theme */
+/* React Datepicker styling overrides for theme */
 .react-datepicker-wrapper {
   width: 100%;
 }
 
 .react-datepicker {
-  background-color: #161822 !important;
-  border: 1px solid #262936 !important;
+  background-color: var(--card-color) !important;
+  border: 1px solid var(--border-color) !important;
   font-family: 'Inter', sans-serif !important;
-  color: #f3f4f6 !important;
+  color: var(--text-primary) !important;
   border-radius: 0.75rem !important;
   overflow: hidden;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
 }
 
 .react-datepicker__header {
-  background-color: #1d2030 !important;
-  border-bottom: 1px solid #262936 !important;
+  background-color: var(--input-color) !important;
+  border-bottom: 1px solid var(--border-color) !important;
 }
 
 .react-datepicker__current-month,
 .react-datepicker__day-name,
 .react-datepicker-time__header {
-  color: #f3f4f6 !important;
+  color: var(--text-primary) !important;
 }
 
 .react-datepicker__day {
-  color: #9ca3af !important;
+  color: var(--text-secondary) !important;
 }
 
 .react-datepicker__day:hover {
