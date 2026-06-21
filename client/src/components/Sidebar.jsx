@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, LogOut, Menu, X } from 'lucide-react';
+import { Home, User, LogOut, Menu, X } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 
 export default function Sidebar() {
@@ -14,7 +14,8 @@ export default function Sidebar() {
   };
 
   const navItems = [
-    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { name: 'Home', path: '/dashboard', icon: Home },
+    { name: 'Account', path: '/account', icon: User },
   ];
 
   return (

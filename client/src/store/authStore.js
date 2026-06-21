@@ -39,6 +39,21 @@ export const useAuthStore = create((set) => ({
     set({ token: null, user: null, loading: false });
   },
 
+  updateProfile: async (name, email, password) => {
+    try {
+      const payload = { name, email };
+      if (password) payload.password = password;
+      const response = await api.put('/auth/profile', payload);
+      const { token, ...user } = response.data;
+      localStorage.setItem('resumify_token', token);
+      set({ token, user, loading: false });
+      return { success: true };
+    } catch (error) {
+      const message = error.response?.data?.message || 'Failed to update profile';
+      return { success: false, message };
+    }
+  },
+
   checkAuth: async () => {
     const token = localStorage.getItem('resumify_token');
     if (!token) {

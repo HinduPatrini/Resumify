@@ -9,9 +9,9 @@ export default {
       colors: {
         background: "#0e1015",
         accent: {
-          DEFAULT: "#6e5cf5",
-          hover: "#5a4be3",
-          light: "rgba(110, 92, 245, 0.15)",
+          DEFAULT: "rgba(var(--color-accent-rgb), <alpha-value>)",
+          hover: "rgba(var(--color-accent-hover-rgb), <alpha-value>)",
+          light: "rgba(var(--color-accent-rgb), 0.15)",
         },
         dark: {
           card: "#161822",

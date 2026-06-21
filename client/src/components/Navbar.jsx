@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 
 export default function Navbar({ title, children }) {
@@ -22,14 +23,17 @@ export default function Navbar({ title, children }) {
         </div>
         
         {user && (
-          <div className="flex items-center gap-3 pl-4 border-l border-dark-border">
-            <div className="w-8 h-8 rounded-full bg-accent/20 border border-accent/30 text-accent font-heading font-bold text-xs flex items-center justify-center select-none shadow-inner">
+          <Link 
+            to="/account" 
+            className="flex items-center gap-3 pl-4 border-l border-dark-border hover:opacity-80 transition-all duration-200 select-none group"
+          >
+            <div className="w-8 h-8 rounded-full bg-accent/20 border border-accent/30 text-accent font-heading font-bold text-xs flex items-center justify-center shadow-inner group-hover:border-accent/60 group-hover:bg-accent/30 transition-all">
               {user.name?.charAt(0).toUpperCase() || 'U'}
             </div>
-            <span className="text-sm font-sans font-medium text-text-secondary select-none">
+            <span className="text-sm font-sans font-medium text-text-secondary group-hover:text-text-primary transition-colors">
               {user.name}
             </span>
-          </div>
+          </Link>
         )}
       </div>
     </header>

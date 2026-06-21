@@ -2,17 +2,21 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { useAuthStore } from './store/authStore';
+import { useThemeStore } from './store/themeStore';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import ResumeBuilder from './pages/ResumeBuilder';
 import PublicResumeView from './pages/PublicResumeView';
+import AccountSettings from './pages/AccountSettings';
 import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   const { checkAuth, token } = useAuthStore();
+  const { initTheme } = useThemeStore();
 
   useEffect(() => {
+    initTheme();
     if (token) {
       checkAuth();
     }
@@ -50,6 +54,7 @@ function App() {
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/builder/:id" element={<ResumeBuilder />} />
+          <Route path="/account" element={<AccountSettings />} />
         </Route>
 
         {/* Root Fallback Redirects */}
