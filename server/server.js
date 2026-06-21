@@ -8,7 +8,20 @@ connectDB();
 
 const app = express();
 
-app.use(cors({ origin: process.env.CLIENT_URL }));
+const allowedOrigins = process.env.CLIENT_URL ? process.env.CLIENT_URL.split(',') : [];
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    const isAllowed = allowedOrigins.includes(origin) || 
+                      /^http:\/\/localhost:\d+$/.test(origin) || 
+                      /^http:\/\/127\.0\.0\.1:\d+$/.test(origin);
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
 app.use(express.json());
 
 app.use('/api/auth', require('./routes/authRoutes'));
