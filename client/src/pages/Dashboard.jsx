@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Edit2, Trash2, Calendar, FileText } from 'lucide-react';
+import { Plus, Edit2, Trash2, Calendar, FileText, Linkedin } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useResumeStore } from '../store/resumeStore';
 import Sidebar from '../components/Sidebar';
@@ -9,6 +9,8 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import Modal from '../components/ui/Modal';
 import Input from '../components/ui/Input';
+import LinkedinImportModal from '../components/ai/LinkedinImportModal';
+import api from '../api/axios';
 
 export default function Dashboard() {
   const { resumes, fetchResumes, createResume, deleteResume, loading } = useResumeStore();
@@ -16,6 +18,8 @@ export default function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
+  const [isLinkedinModalOpen, setIsLinkedinModalOpen] = useState(false);
+  const [importLoading, setImportLoading] = useState(false);
 
   useEffect(() => {
     fetchResumes();
@@ -36,6 +40,37 @@ export default function Dashboard() {
       navigate(`/builder/${newResume._id}`);
     } else {
       toast.error('Failed to create resume.');
+    }
+  };
+
+  const handleLinkedinImport = async (parsedData) => {
+    setImportLoading(true);
+    try {
+      // Create a new resume with a title from parsed name
+      const importTitle = parsedData.personalInfo?.fullName
+        ? `${parsedData.personalInfo.fullName}'s Resume`
+        : 'LinkedIn Import';
+      const newResume = await createResume(importTitle);
+      if (!newResume) throw new Error('Failed to create resume.');
+
+      // Populate with parsed LinkedIn data
+      const mergedData = {
+        ...newResume,
+        personalInfo: parsedData.personalInfo || {},
+        summary: parsedData.summary || '',
+        education: parsedData.education || [],
+        experience: parsedData.experience || [],
+        skills: parsedData.skills || [],
+        projects: parsedData.projects || [],
+      };
+      await api.put(`/resumes/${newResume._id}`, mergedData);
+      toast.success('Resume created from LinkedIn profile!');
+      navigate(`/builder/${newResume._id}`);
+    } catch (error) {
+      console.error('LinkedIn import failed:', error);
+      toast.error('Failed to import from LinkedIn. Please try again.');
+    } finally {
+      setImportLoading(false);
     }
   };
 
@@ -69,19 +104,30 @@ export default function Dashboard() {
       {/* Main Panel Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         <Navbar title="My Resumes">
-          <Button
-            onClick={() => setIsModalOpen(true)}
-            variant="primary"
-            size="sm"
-            icon={Plus}
-          >
-            Create Resume
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => setIsLinkedinModalOpen(true)}
+              variant="secondary"
+              size="sm"
+              className="hidden sm:inline-flex text-xs"
+            >
+              <Linkedin className="h-3.5 w-3.5 mr-1.5" />
+              Import LinkedIn
+            </Button>
+            <Button
+              onClick={() => setIsModalOpen(true)}
+              variant="primary"
+              size="sm"
+              icon={Plus}
+            >
+              Create Resume
+            </Button>
+          </div>
         </Navbar>
 
         <main className="flex-1 p-6 md:p-8 overflow-y-auto">
           {/* Mobile Only: Create Floating Button replacement */}
-          <div className="md:hidden mb-6">
+          <div className="md:hidden mb-6 flex flex-col gap-3">
             <Button
               onClick={() => setIsModalOpen(true)}
               variant="primary"
@@ -89,6 +135,14 @@ export default function Dashboard() {
               icon={Plus}
             >
               Create New Resume
+            </Button>
+            <Button
+              onClick={() => setIsLinkedinModalOpen(true)}
+              variant="secondary"
+              className="w-full py-3"
+            >
+              <Linkedin className="h-4 w-4 mr-2" />
+              Import from LinkedIn
             </Button>
           </div>
 
@@ -211,6 +265,14 @@ export default function Dashboard() {
           </div>
         </div>
       </Modal>
+
+      {/* LinkedIn Import Modal */}
+      <LinkedinImportModal
+        isOpen={isLinkedinModalOpen}
+        onClose={() => setIsLinkedinModalOpen(false)}
+        onConfirm={handleLinkedinImport}
+        confirmMessage="This will create a new resume pre-filled with your LinkedIn profile data. Continue?"
+      />
     </div>
   );
 }

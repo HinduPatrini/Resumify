@@ -74,13 +74,13 @@ export default function LinkedinImportModal({
       if (activeTab === 'upload') {
         const formData = new FormData();
         formData.append('file', file);
-        response = await api.post('/api/ai/parse-linkedin', formData, {
+        response = await api.post('/ai/parse-linkedin', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
       } else {
-        response = await api.post('/api/ai/parse-linkedin', {
+        response = await api.post('/ai/parse-linkedin', {
           rawText: rawText,
         });
       }
