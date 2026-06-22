@@ -8,10 +8,14 @@ import Button from '../ui/Button';
 import api from '../../api/axios';
 import toast from 'react-hot-toast';
 
+import ImproveBulletModal from '../ai/ImproveBulletModal';
+
 export default function ExperienceForm() {
   const currentResume = useResumeStore((state) => state.currentResume);
   const updateSectionList = useResumeStore((state) => state.updateSectionList);
-  const [aiLoading, setAiLoading] = useState({});
+  const [modalOpen, setModalOpen] = useState(false);
+  const [activeExpIdx, setActiveExpIdx] = useState(null);
+  const [activeBulletIdx, setActiveBulletIdx] = useState(null);
 
   if (!currentResume) return null;
   const experience = currentResume.experience || [];
@@ -61,43 +65,15 @@ export default function ExperienceForm() {
     handleChange(expIdx, 'bullets', updatedBullets);
   };
 
-  // AI Bullet improver call
-  const handleImproveWithAI = async (expIdx, bulletIdx) => {
+  const triggerImproveModal = (expIdx, bulletIdx) => {
     const currentBullet = experience[expIdx].bullets[bulletIdx];
     if (!currentBullet.trim()) {
       toast.error('Please type a bullet point before improving it.');
       return;
     }
-
-    const key = `${expIdx}-${bulletIdx}`;
-    setAiLoading((prev) => ({ ...prev, [key]: true }));
-
-    try {
-      const response = await api.post('/ai/improve-bullet', { bullet: currentBullet });
-      const improved = response.data.improvedBullet;
-      
-      const expItem = experience[expIdx];
-      const updatedBullets = expItem.bullets.map((b, idx) => (idx === bulletIdx ? improved : b));
-      handleChange(expIdx, 'bullets', updatedBullets);
-      toast.success('Bullet point improved!');
-    } catch (error) {
-      console.warn('AI integration failed, running fallback simulation:', error);
-      // Nice professional verb replacements for simulation
-      const fallbackTemplates = [
-        "Architected scalable infrastructure components, reducing end-to-end response latency by 35%.",
-        "Orchestrated cross-functional deployment pipelines, resulting in a 50% decrease in manual release overhead.",
-        "Engineered responsive and modular user interfaces utilizing React and modern layout designs.",
-        "Collaborated with analytics teams to track product metrics, elevating overall customer conversion rates.",
-        "Designed RESTful service interfaces, optimizing database query executions by 20%."
-      ];
-      const selected = fallbackTemplates[bulletIdx % fallbackTemplates.length];
-      const expItem = experience[expIdx];
-      const updatedBullets = expItem.bullets.map((b, idx) => (idx === bulletIdx ? selected : b));
-      handleChange(expIdx, 'bullets', updatedBullets);
-      toast.success('Improved with AI (simulated fallback)!');
-    } finally {
-      setAiLoading((prev) => ({ ...prev, [key]: false }));
-    }
+    setActiveExpIdx(expIdx);
+    setActiveBulletIdx(bulletIdx);
+    setModalOpen(true);
   };
 
   const parseDate = (dateStr) => {
@@ -208,13 +184,12 @@ export default function ExperienceForm() {
                       <div className="flex items-center justify-end gap-1.5 border-t border-dark-border/40 sm:border-0 pt-2 sm:pt-0 shrink-0">
                         {/* Improve Bullet Button */}
                         <Button
-                          onClick={() => handleImproveWithAI(expIdx, bulletIdx)}
+                          onClick={() => triggerImproveModal(expIdx, bulletIdx)}
                           variant="ghost"
                           size="sm"
-                          isLoading={aiLoading[`${expIdx}-${bulletIdx}`]}
                           className="text-[#a78bfa] hover:text-white hover:bg-accent/15 px-2.5 py-1 text-xs"
                         >
-                          {!aiLoading[`${expIdx}-${bulletIdx}`] && <Sparkles className="h-3.5 w-3.5 mr-1" />}
+                          <Sparkles className="h-3.5 w-3.5 mr-1" />
                           AI Improve
                         </Button>
                         
@@ -255,6 +230,24 @@ export default function ExperienceForm() {
       >
         Add Work Experience
       </Button>
+
+      {modalOpen && activeExpIdx !== null && activeBulletIdx !== null && (
+        <ImproveBulletModal
+          isOpen={modalOpen}
+          onClose={() => {
+            setModalOpen(false);
+            setActiveExpIdx(null);
+            setActiveBulletIdx(null);
+          }}
+          bulletText={experience[activeExpIdx]?.bullets[activeBulletIdx] || ''}
+          jobTitle={experience[activeExpIdx]?.role || ''}
+          onSelect={(selectedText) => {
+            const expItem = experience[activeExpIdx];
+            const updatedBullets = expItem.bullets.map((b, idx) => (idx === activeBulletIdx ? selectedText : b));
+            handleChange(activeExpIdx, 'bullets', updatedBullets);
+          }}
+        />
+      )}
     </div>
   );
 }

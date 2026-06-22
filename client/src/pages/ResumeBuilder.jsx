@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowLeft, Check, CloudLightning, Copy, Download, Eye, Globe, 
-  Loader2, Menu, QrCode, RefreshCw, Save, Share2, Sparkles, LayoutGrid, GripVertical, ChevronDown 
+  Loader2, Menu, QrCode, RefreshCw, Save, Share2, Sparkles, LayoutGrid, GripVertical, ChevronDown, Activity 
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { QRCodeSVG } from 'qrcode.react';
@@ -28,6 +28,7 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import Modal from '../components/ui/Modal';
 import Input from '../components/ui/Input';
+import AtsCheckerPanel from '../components/ai/AtsCheckerPanel';
 
 // DND Kit Core
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
@@ -466,21 +467,30 @@ export default function ResumeBuilder() {
         <div className="md:hidden flex border-b border-dark-border bg-dark-card/65 sticky top-0 z-10 shrink-0 select-none">
           <button
             onClick={() => setActiveTab('editor')}
-            className={`flex-1 py-3 text-sm font-heading font-medium border-b-2 transition-all flex items-center justify-center gap-2 ${
+            className={`flex-1 py-3 text-xs font-heading font-medium border-b-2 transition-all flex items-center justify-center gap-1.5 ${
               activeTab === 'editor' ? 'border-accent text-accent bg-accent/5' : 'border-transparent text-text-secondary'
             }`}
           >
-            <Sparkles className="h-4 w-4" />
+            <Sparkles className="h-3.5 w-3.5" />
             Editor Form
           </button>
           <button
             onClick={() => setActiveTab('preview')}
-            className={`flex-1 py-3 text-sm font-heading font-medium border-b-2 transition-all flex items-center justify-center gap-2 ${
+            className={`flex-1 py-3 text-xs font-heading font-medium border-b-2 transition-all flex items-center justify-center gap-1.5 ${
               activeTab === 'preview' ? 'border-accent text-accent bg-accent/5' : 'border-transparent text-text-secondary'
             }`}
           >
-            <Eye className="h-4 w-4" />
+            <Eye className="h-3.5 w-3.5" />
             Live Preview
+          </button>
+          <button
+            onClick={() => setActiveTab('ats')}
+            className={`flex-1 py-3 text-xs font-heading font-medium border-b-2 transition-all flex items-center justify-center gap-1.5 ${
+              activeTab === 'ats' ? 'border-accent text-accent bg-accent/5' : 'border-transparent text-text-secondary'
+            }`}
+          >
+            <Activity className="h-3.5 w-3.5" />
+            ATS Check
           </button>
         </div>
 
@@ -488,90 +498,118 @@ export default function ResumeBuilder() {
         <section 
           className={`
             flex-1 h-full overflow-y-auto p-4 md:p-6 md:border-r border-dark-border flex flex-col gap-4 max-w-full md:max-w-[50%] shrink-0
-            ${activeTab === 'editor' ? 'block' : 'hidden md:block'}
+            ${activeTab === 'editor' || activeTab === 'ats' ? 'block' : 'hidden md:block'}
           `}
         >
-          {/* Template Switcher Ribbon inside the editor */}
-          <div className="bg-dark-card/45 border border-dark-border rounded-xl p-4 flex flex-col gap-3 select-none">
-            <span className="text-xs font-heading font-semibold text-text-secondary tracking-wide uppercase">
-              Select Resume Template Layout
-            </span>
-            <div className="grid grid-cols-3 gap-2">
-              {['minimal', 'modern', 'classic'].map((styleName) => (
-                <button
-                  key={styleName}
-                  onClick={() => updateField('template', styleName)}
-                  className={`
-                    py-2.5 px-2 rounded-lg font-heading text-xs font-semibold capitalize border transition-all text-center focus:outline-none
-                    ${
-                      (currentResume.template || 'minimal').toLowerCase() === styleName
-                        ? 'bg-accent text-white border-accent shadow-md shadow-accent/15'
-                        : 'bg-dark-input text-text-secondary border-dark-border hover:bg-dark-hover hover:text-text-primary'
-                    }
-                  `}
-                >
-                  {styleName}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Collapsible/Accordion Forms list */}
-          <div className="flex flex-col">
-            
-            {/* Personal Details (Static, always at the top) */}
-            <div className="border border-dark-border rounded-xl bg-dark-card/40 overflow-hidden mb-4">
-              <div 
-                onClick={() => setExpandedSection(expandedSection === 'personal' ? null : 'personal')}
-                className="flex items-center justify-between px-4 py-3.5 bg-dark-card cursor-pointer select-none"
-              >
-                <span className="font-heading font-semibold text-text-primary text-sm hover:text-accent transition-colors">
-                  👤 Personal Information
-                </span>
-                <ChevronDown className={`h-4.5 w-4.5 text-text-secondary transition-transform duration-250 ${expandedSection === 'personal' ? 'rotate-180' : ''}`} />
-              </div>
-              <AnimatePresence initial={false}>
-                {expandedSection === 'personal' && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <div className="p-5 border-t border-dark-border bg-dark-card/10">
-                      <PersonalInfoForm />
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* DND Context for other sections */}
-            <DndContext 
-              sensors={sensors} 
-              collisionDetection={closestCenter} 
-              onDragEnd={handleDragEnd}
+          {/* Desktop Left Column Tab Switcher */}
+          <div className="hidden md:flex border border-dark-border bg-dark-card/25 rounded-xl p-1 mb-2 select-none">
+            <button
+              onClick={() => setActiveTab('editor')}
+              className={`flex-1 py-2 text-xs font-heading font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                activeTab === 'editor' ? 'bg-accent text-white shadow-md font-bold' : 'text-text-secondary hover:text-text-primary'
+              }`}
             >
-              <SortableContext items={sectionOrder} strategy={verticalListSortingStrategy}>
-                {sectionOrder.map((sectionId) => {
-                  const sectionData = sectionsConfig[sectionId];
-                  if (!sectionData) return null;
-                  return (
-                    <SortableAccordion
-                      key={sectionId}
-                      id={sectionId}
-                      title={sectionData.title}
-                      isExpanded={expandedSection === sectionId}
-                      onToggle={() => setExpandedSection(expandedSection === sectionId ? null : sectionId)}
-                    >
-                      {sectionData.component}
-                    </SortableAccordion>
-                  );
-                })}
-              </SortableContext>
-            </DndContext>
-
+              <Sparkles className="h-3.5 w-3.5" />
+              Editor Form
+            </button>
+            <button
+              onClick={() => setActiveTab('ats')}
+              className={`flex-1 py-2 text-xs font-heading font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                activeTab === 'ats' ? 'bg-accent text-white shadow-md font-bold' : 'text-text-secondary hover:text-text-primary'
+              }`}
+            >
+              <Activity className="h-3.5 w-3.5" />
+              ATS Audit Check
+            </button>
           </div>
+          {activeTab === 'editor' ? (
+            <>
+              {/* Template Switcher Ribbon inside the editor */}
+              <div className="bg-dark-card/45 border border-dark-border rounded-xl p-4 flex flex-col gap-3 select-none">
+                <span className="text-xs font-heading font-semibold text-text-secondary tracking-wide uppercase">
+                  Select Resume Template Layout
+                </span>
+                <div className="grid grid-cols-3 gap-2">
+                  {['minimal', 'modern', 'classic'].map((styleName) => (
+                    <button
+                      key={styleName}
+                      type="button"
+                      onClick={() => updateField('template', styleName)}
+                      className={`
+                        py-2.5 px-2 rounded-lg font-heading text-xs font-semibold capitalize border transition-all text-center focus:outline-none
+                        ${
+                          (currentResume.template || 'minimal').toLowerCase() === styleName
+                            ? 'bg-accent text-white border-accent shadow-md shadow-accent/15'
+                            : 'bg-dark-input text-text-secondary border-dark-border hover:bg-dark-hover hover:text-text-primary'
+                        }
+                      `}
+                    >
+                      {styleName}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Collapsible/Accordion Forms list */}
+              <div className="flex flex-col">
+                
+                {/* Personal Details (Static, always at the top) */}
+                <div className="border border-dark-border rounded-xl bg-dark-card/40 overflow-hidden mb-4">
+                  <div 
+                    onClick={() => setExpandedSection(expandedSection === 'personal' ? null : 'personal')}
+                    className="flex items-center justify-between px-4 py-3.5 bg-dark-card cursor-pointer select-none"
+                  >
+                    <span className="font-heading font-semibold text-text-primary text-sm hover:text-accent transition-colors">
+                      👤 Personal Information
+                    </span>
+                    <ChevronDown className={`h-4.5 w-4.5 text-text-secondary transition-transform duration-250 ${expandedSection === 'personal' ? 'rotate-180' : ''}`} />
+                  </div>
+                  <AnimatePresence initial={false}>
+                    {expandedSection === 'personal' && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <div className="p-5 border-t border-dark-border bg-dark-card/10">
+                          <PersonalInfoForm />
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* DND Context for other sections */}
+                <DndContext 
+                  sensors={sensors} 
+                  collisionDetection={closestCenter} 
+                  onDragEnd={handleDragEnd}
+                >
+                  <SortableContext items={sectionOrder} strategy={verticalListSortingStrategy}>
+                    {sectionOrder.map((sectionId) => {
+                      const sectionData = sectionsConfig[sectionId];
+                      if (!sectionData) return null;
+                      return (
+                        <SortableAccordion
+                          key={sectionId}
+                          id={sectionId}
+                          title={sectionData.title}
+                          isExpanded={expandedSection === sectionId}
+                          onToggle={() => setExpandedSection(expandedSection === sectionId ? null : sectionId)}
+                        >
+                          {sectionData.component}
+                        </SortableAccordion>
+                      );
+                    })}
+                  </SortableContext>
+                </DndContext>
+
+              </div>
+            </>
+          ) : (
+            <AtsCheckerPanel resumeId={id} />
+          )}
         </section>
 
         {/* RIGHT WORKSPACE: Live Preview panel */}
