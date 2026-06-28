@@ -4,7 +4,7 @@ import api from '../api/axios';
 export const useAuthStore = create((set) => ({
   user: null,
   token: localStorage.getItem('resumify_token') || null,
-  loading: true,
+  loading: !!localStorage.getItem('resumify_token'), // only true if we have a token to validate
 
   login: async (email, password) => {
     try {

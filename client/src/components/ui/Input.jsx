@@ -28,7 +28,6 @@ export default function Input({
       
       {type === 'textarea' ? (
         <textarea
-          name={name}
           placeholder={placeholder}
           className={`${baseInputStyle} resize-y min-h-[100px]`}
           rows={rows}
@@ -39,7 +38,6 @@ export default function Input({
         <div className="relative w-full">
           <input
             type={resolvedType}
-            name={name}
             placeholder={placeholder}
             className={`${baseInputStyle} ${isPasswordType ? 'pr-11' : ''}`}
             {...register}
