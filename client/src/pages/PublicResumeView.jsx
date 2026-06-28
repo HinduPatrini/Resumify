@@ -13,8 +13,8 @@ export default function PublicResumeView() {
     const fetchPublicResume = async () => {
       try {
         setLoading(true);
-        // Call the public non-authenticated endpoint on the server
-        const response = await axios.get(`http://127.0.0.1:5000/api/resumes/public/${slug}`);
+        const apiBase = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
+        const response = await axios.get(`${apiBase}/resumes/public/${slug}`);
         setResume(response.data);
         setError(null);
       } catch (err) {
