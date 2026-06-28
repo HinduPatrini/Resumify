@@ -9,6 +9,22 @@ import toast from 'react-hot-toast';
 import { QRCodeSVG } from 'qrcode.react';
 import { PDFDownloadLink, Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 
+const Linkedin = (props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+    <rect width="4" height="12" x="2" y="9" />
+    <circle cx="4" cy="4" r="2" />
+  </svg>
+);
+
 // Zustand Store
 import { useResumeStore } from '../store/resumeStore';
 
@@ -29,6 +45,7 @@ import Card from '../components/ui/Card';
 import Modal from '../components/ui/Modal';
 import Input from '../components/ui/Input';
 import AtsCheckerPanel from '../components/ai/AtsCheckerPanel';
+import LinkedinImportModal from '../components/ai/LinkedinImportModal';
 
 // DND Kit Core
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
@@ -260,6 +277,7 @@ export default function ResumeBuilder() {
   const [copied, setCopied] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
   const [tempTitle, setTempTitle] = useState('');
+  const [isLinkedinModalOpen, setIsLinkedinModalOpen] = useState(false);
 
   // Sensors for Drag and Drop
   const sensors = useSensors(
@@ -368,6 +386,28 @@ export default function ResumeBuilder() {
     toast.success('Title updated (saving...)');
   };
 
+  const handleLinkedinImport = (parsedData) => {
+    if (!currentResume) return;
+    
+    // Merge parsed LinkedIn data into currentResume
+    const updatedResume = {
+      ...currentResume,
+      personalInfo: {
+        ...currentResume.personalInfo,
+        ...parsedData.personalInfo
+      },
+      summary: parsedData.summary || currentResume.summary,
+      education: parsedData.education || currentResume.education,
+      experience: parsedData.experience || currentResume.experience,
+      skills: parsedData.skills || currentResume.skills,
+      projects: parsedData.projects || currentResume.projects,
+    };
+    
+    // Update store state directly to trigger debounced auto-save
+    useResumeStore.setState({ currentResume: updatedResume });
+    toast.success('Resume fields updated from LinkedIn!');
+  };
+
   return (
     <div className="h-screen bg-background flex flex-col overflow-hidden">
       
@@ -430,6 +470,16 @@ export default function ResumeBuilder() {
 
         {/* Action Panel: Share & PDF Export */}
         <div className="flex items-center gap-2 shrink-0">
+          <Button
+            onClick={() => setIsLinkedinModalOpen(true)}
+            variant="secondary"
+            size="sm"
+            className="hidden sm:inline-flex text-xs"
+          >
+            <Linkedin className="h-3.5 w-3.5 mr-1.5" />
+            Import LinkedIn
+          </Button>
+
           <Button
             onClick={() => setIsShareModalOpen(true)}
             variant="secondary"
@@ -711,7 +761,17 @@ export default function ResumeBuilder() {
       </Modal>
 
       {/* Mobile Floating Action Bottom Menu */}
-      <div className="sm:hidden fixed bottom-4 right-4 z-40">
+      <div className="sm:hidden fixed bottom-4 right-4 z-40 flex flex-col gap-2">
+        <Button
+          onClick={() => setIsLinkedinModalOpen(true)}
+          variant="secondary"
+          size="md"
+          className="shadow-xl rounded-full px-4 h-12 flex items-center justify-center gap-2 border border-dark-border bg-dark-card"
+        >
+          <Linkedin className="h-4 w-4" />
+          LinkedIn Import
+        </Button>
+        
         <Button
           onClick={() => setIsShareModalOpen(true)}
           variant="secondary"
@@ -722,6 +782,14 @@ export default function ResumeBuilder() {
           Share
         </Button>
       </div>
+
+      {/* LinkedIn Import Modal */}
+      <LinkedinImportModal
+        isOpen={isLinkedinModalOpen}
+        onClose={() => setIsLinkedinModalOpen(false)}
+        onConfirm={handleLinkedinImport}
+        confirmMessage="This will overwrite your current resume details with the parsed LinkedIn profile data. Continue?"
+      />
     </div>
   );
 }

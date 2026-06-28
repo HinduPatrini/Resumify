@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Edit2, Trash2, Calendar, FileText, Linkedin } from 'lucide-react';
+import { Plus, Edit2, Trash2, Calendar, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useResumeStore } from '../store/resumeStore';
 import Sidebar from '../components/Sidebar';
@@ -11,6 +11,22 @@ import Modal from '../components/ui/Modal';
 import Input from '../components/ui/Input';
 import LinkedinImportModal from '../components/ai/LinkedinImportModal';
 import api from '../api/axios';
+
+const Linkedin = (props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+    <rect width="4" height="12" x="2" y="9" />
+    <circle cx="4" cy="4" r="2" />
+  </svg>
+);
 
 export default function Dashboard() {
   const { resumes, fetchResumes, createResume, deleteResume, loading } = useResumeStore();
