@@ -1,23 +1,32 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 
+// Input supports two usage modes:
+// 1. With React Hook Form: pass register={register('fieldName', rules)}
+// 2. Plain controlled: pass value + onChange as usual via ...props
 export default function Input({
   label,
-  name,
   type = 'text',
   placeholder = '',
-  register = {},
+  register,        // RHF register result object: { name, ref, onChange, onBlur }
   error = null,
   className = '',
   rows = 4,
-  ...props
+  ...props         // any extra HTML attributes (value, onChange, id, etc.)
 }) {
   const [showPassword, setShowPassword] = useState(false);
   const isPasswordType = type === 'password';
   const resolvedType = isPasswordType ? (showPassword ? 'text' : 'password') : type;
-  
-  const baseInputStyle = 'w-full bg-dark-input text-text-primary border border-dark-border rounded-lg px-4 py-2.5 text-sm font-sans placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-all duration-200';
-  
+
+  const baseInputStyle =
+    'w-full bg-dark-input text-text-primary border border-dark-border rounded-lg px-4 py-2.5 text-sm font-sans placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-all duration-200';
+
+  // Spread RHF register props first so that any explicit props can override if needed
+  const inputProps = {
+    ...(register || {}),
+    ...props,
+  };
+
   return (
     <div className={`flex flex-col gap-1.5 w-full ${className}`}>
       {label && (
@@ -25,14 +34,13 @@ export default function Input({
           {label}
         </label>
       )}
-      
+
       {type === 'textarea' ? (
         <textarea
           placeholder={placeholder}
           className={`${baseInputStyle} resize-y min-h-[100px]`}
           rows={rows}
-          {...register}
-          {...props}
+          {...inputProps}
         />
       ) : (
         <div className="relative w-full">
@@ -40,8 +48,7 @@ export default function Input({
             type={resolvedType}
             placeholder={placeholder}
             className={`${baseInputStyle} ${isPasswordType ? 'pr-11' : ''}`}
-            {...register}
-            {...props}
+            {...inputProps}
           />
           {isPasswordType && (
             <button
@@ -55,7 +62,7 @@ export default function Input({
           )}
         </div>
       )}
-      
+
       {error && (
         <span className="text-xs font-sans text-red-400 font-medium">
           {error.message || error}
