@@ -60,7 +60,7 @@ const updateResume = async (req, res) => {
     }
 
     const updatedResume = await Resume.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
+      returnDocument: 'after',
       runValidators: true,
     });
 
