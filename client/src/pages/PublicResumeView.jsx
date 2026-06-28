@@ -13,8 +13,15 @@ export default function PublicResumeView() {
     const fetchPublicResume = async () => {
       try {
         setLoading(true);
-        const apiBase = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
-        const response = await axios.get(`${apiBase}/resumes/public/${slug}`);
+        const getBaseURL = () => {
+          if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+          const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+          if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1') {
+            return 'https://resumify-6uio.onrender.com/api';
+          }
+          return 'http://127.0.0.1:5000/api';
+        };
+        const response = await axios.get(`${getBaseURL()}/resumes/public/${slug}`);
         setResume(response.data);
         setError(null);
       } catch (err) {
